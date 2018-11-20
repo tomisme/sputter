@@ -1,24 +1,37 @@
 (ns sputter.util
   (:require [clojure.string          :as str]
-            [pandect.algo.keccak-256 :as kk-256])
-  (:import [javax.xml.bind DatatypeConverter]
-           [java.math        BigInteger]
-           [io.nervous.juint UInt256]
-           [java.util        Arrays]))
+            #?(:cljs [sputter.util.bytes :as bytes])
+            #?(:clj [pandect.algo.keccak-256 :as kk-256]
+               :cljs [goog.crypt :as crypt]))
+  #?(:cljs (:require-macros [sputter.util]))
+  #?(:clj (:import [javax.xml.bind DatatypeConverter]
+                   [java.math        BigInteger]
+                   [io.nervous.juint UInt256]
+                   [java.util        Arrays])))
 
-(def sha3       kk-256/keccak-256)
-(def sha3-bytes kk-256/keccak-256-bytes)
+#?(:clj
+   (do
+     (def sha3       kk-256/keccak-256)
+     (def sha3-bytes kk-256/keccak-256-bytes)))
 
 (defn hex->bytes [s]
-  (-> (str/replace s "0x" "")
-      DatatypeConverter/parseHexBinary))
+  #?(:clj
+     (-> (str/replace s "0x" "")
+         DatatypeConverter/parseHexBinary)
+     :cljs
+     (-> (str/replace s "0x" "")
+         crypt/hexToByteArray
+         bytes/byte-array)))
 
 (defn- print-hex [bs]
-  (let [bs (cond (instance? BigInteger bs) (.toByteArray bs)
-                 (instance? UInt256    bs) (.toByteArray bs)
-                 (number? bs)              (.toByteArray (biginteger bs))
-                 :else                     bs)]
-    (-> (DatatypeConverter/printHexBinary bs)
+  (let [bs #?(:clj (cond (instance? BigInteger bs) (.toByteArray bs)
+                         (instance? UInt256    bs) (.toByteArray bs)
+                         (number? bs)              (.toByteArray (biginteger bs))
+                         :else                     bs)
+              :cljs bs)]
+    (-> bs
+        #?(:clj DatatypeConverter/printHexBinary
+           :cljs crypt/byteArrayToString)
         (str/replace #"^0+" ""))))
 
 (defn- pad [s opts]
@@ -31,22 +44,24 @@
     (pad (apply str strings) opts)))
 
 (defn byte-slice [bytes i len]
-  (Arrays/copyOfRange bytes (long i) (long (+ i len))))
+  #?(:clj (Arrays/copyOfRange bytes (long i) (long (+ i len)))
+     :cljs (.slice bytes i (+ i len))))
 
 (defn map-values [f m]
   (into {}
     (for [[k v] m]
       [k (f v)])))
 
-(defmacro for-map
-  ([seq-exprs key-expr val-expr]
-   `(for-map ~(gensym "m") ~seq-exprs ~key-expr ~val-expr))
-  ([m-sym seq-exprs key-expr val-expr]
-   `(let [m-atom# (atom (transient {}))]
-      (doseq ~seq-exprs
-        (let [~m-sym @m-atom#]
-          (reset! m-atom# (assoc! ~m-sym ~key-expr ~val-expr))))
-      (persistent! @m-atom#))))
+#?(:clj
+   (defmacro for-map
+     ([seq-exprs key-expr val-expr]
+      `(for-map ~(gensym "m") ~seq-exprs ~key-expr ~val-expr))
+     ([m-sym seq-exprs key-expr val-expr]
+      `(let [m-atom# (atom (transient {}))]
+         (doseq ~seq-exprs
+           (let [~m-sym @m-atom#]
+             (reset! m-atom# (assoc! ~m-sym ~key-expr ~val-expr))))
+         (persistent! @m-atom#)))))
 
 (defn error? [v]
   (and (keyword? v) (= (namespace v) "sputter.error")))

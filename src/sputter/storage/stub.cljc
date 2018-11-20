@@ -3,7 +3,8 @@
             [sputter.word    :as word]
             [sputter.util    :refer [for-map]]))
 
-(extend-type (type {})
+(extend-type #?(:clj (type {})
+                :cljs cljs.core/PersistentArrayMap)
   storage/VMStorage
   (retrieve [m addr pos]
     (get-in m [addr pos] word/zero))

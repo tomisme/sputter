@@ -1,5 +1,5 @@
 (ns sputter.op
-  (:require [pandect.algo.sha3-256 :as sha]
+  (:require #?(:clj [pandect.algo.sha3-256 :as sha])
             [sputter.op.table      :as op.table]
             [sputter.word          :as word]
             [sputter.tx.memory     :as mem]

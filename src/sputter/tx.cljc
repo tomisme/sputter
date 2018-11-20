@@ -37,7 +37,7 @@
       (assoc  tx :sputter/error :gas-insufficient)
       (update tx :gas - n)))
   (instruction [tx]
-    (program pointer))
+    (program #?(:clj pointer :cljs (.toNumber pointer))))
   (push [tx value]
     (update tx :stack conj value))
   (pop [tx num]
@@ -68,7 +68,7 @@
   (let [pos (word/add (:pointer tx) (word/->Word (or offset 1)))]
     (position tx pos)))
 
-(defn map->Transaction
+(defn #?(:clj map->Transaction :cljs create-transaction)
   "Return a transaction record, optionally initialized with values from `defaults`"
   [& [defaults]]
   (let [mem     (mem/->Memory (:memory defaults []))
