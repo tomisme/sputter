@@ -3,7 +3,6 @@
             #?(:cljs [sputter.util.bytes :as bytes])
             #?(:clj [pandect.algo.keccak-256 :as kk-256]
                :cljs [goog.crypt :as crypt]))
-  #?(:cljs (:require-macros [sputter.util]))
   #?(:clj (:import [javax.xml.bind DatatypeConverter]
                    [java.math        BigInteger]
                    [io.nervous.juint UInt256]

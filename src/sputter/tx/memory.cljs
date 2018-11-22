@@ -1,3 +1,4 @@
+;; TODO merge with memory.clj
 (ns sputter.tx.memory
   (:require [sputter.word :as word]
             [sputter.util.bytes :as bytes]))

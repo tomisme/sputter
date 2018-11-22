@@ -1,6 +1,7 @@
+;; TODO dev deps / production deps
 {:deps {com.bhauman/figwheel-main {:mvn/version "0.1.9"}
         com.bhauman/rebel-readline-cljs {:mvn/version "0.1.4"}
         devcards {:mvn/version "0.2.5"}
         cljsjs/bn {:mvn/version "4.11.8-0"}
-        org.clojure/core.rrb-vector {:mvn/version "0.0.11"}}
+        cheshire {:mvn/version "5.8.0"}}
  :paths ["src" "test" "dev" "target" "resources"]}

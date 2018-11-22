@@ -21,15 +21,16 @@
    ([arr n not-found]
     (-nth arr n not-found))))
 
-(defn byte-array? [x] (js/Uint8Array.prototype.isPrototypeOf x)) 
+(defn byte-array? [x]
+  (js/Uint8Array.prototype.isPrototypeOf x))
 
 (defn byte-array
   [size-or-coll]
   (cond
-    (number? size-or-coll)
-    (js/Uint8Array. size-or-coll)
+    (number? size-or-coll) (js/Uint8Array. size-or-coll)
 
-    (or (array? size-or-coll) (coll? size-or-coll))
+    (or (array? size-or-coll)
+        (coll? size-or-coll))
     (let [len (count size-or-coll)
           arr (js/Uint8Array. len)]
       (loop [i 0, coll size-or-coll]

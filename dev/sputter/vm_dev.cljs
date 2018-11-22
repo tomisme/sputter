@@ -30,3 +30,12 @@
     {"program" p
      "transaction" (assoc t :program "...")
      "(execute)" (assoc (vm/execute t) :program "...")}))
+
+(defcard storage
+  (let [p (vm/disassemble "0x6000600001600055")
+        t (tx/create-transaction
+            {:gas 2100
+             :program p})]
+    {"program" p
+     "transaction" (assoc t :program "...")
+     "(execute)" (assoc (vm/execute t) :program "...")}))

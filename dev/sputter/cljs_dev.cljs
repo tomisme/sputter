@@ -6,16 +6,17 @@
             [sputter.tx.memory :as mem]
             [sputter.util.bn :as bn]
             [sputter.util.bytes :refer [byte-array]]
-            [sputter.vm-dev])
+            [sputter.vm-dev]
+            [sputter.vm-test])
   (:require-macros
    [devcards.core :refer [defcard]]))
 ; (defn d [x] (js/console.log x) x)
 
-(defcard bignumbers
+(defcard bigints
   {
    "(- one one)" (bn/- bn/one bn/one)
    "(+ one one one)" (bn/+ bn/one bn/one bn/one)
-   "256.toArray" (.toArray (bn/bignumber 256))
+   "256.toArray" (.toArray (bn/bigint 256))
    "one to-byte-array" (bn/to-byte-array bn/one)
    "one pad" (bn/to-byte-array bn/one 10)})
 

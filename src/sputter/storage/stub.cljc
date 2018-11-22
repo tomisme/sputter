@@ -1,7 +1,9 @@
 (ns sputter.storage.stub
   (:require [sputter.storage :as storage]
             [sputter.word    :as word]
-            [sputter.util    :refer [for-map]]))
+            #?(:clj [sputter.util :refer [for-map]]))
+  #?(:cljs
+     (:require-macros [sputter.macros :refer [for-map]])))
 
 (extend-type #?(:clj (type {})
                 :cljs cljs.core/PersistentArrayMap)

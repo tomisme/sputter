@@ -37,6 +37,7 @@
       (assoc  tx :sputter/error :gas-insufficient)
       (update tx :gas - n)))
   (instruction [tx]
+    ;; TODO fix this?
     (program #?(:clj pointer :cljs (.toNumber pointer))))
   (push [tx value]
     (update tx :stack conj value))
@@ -68,6 +69,7 @@
   (let [pos (word/add (:pointer tx) (word/->Word (or offset 1)))]
     (position tx pos)))
 
+;; TODO squelch warning or use create-* everywhere?
 (defn #?(:clj map->Transaction :cljs create-transaction)
   "Return a transaction record, optionally initialized with values from `defaults`"
   [& [defaults]]

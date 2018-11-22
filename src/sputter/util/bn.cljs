@@ -1,19 +1,31 @@
 (ns sputter.util.bn
   (:require [cljsjs.bn]
-            [sputter.util.bytes :refer [byte-array]])
-  (:refer-clojure :exclude [or and - + * / not mod zero?]))
+            [sputter.util.bytes :refer [byte-array byte-array?]]
+            [clojure.string    :as str])
+  (:refer-clojure :exclude [or and - + * / not mod zero?])
+  (:require-macros [devcards.core :refer [defcard]]))
 
 ;; TODO use unsigned versions of bn.js methods?
 
-(def BN js/bn)
+(def BigInt js/bn)
 
-(defn bignumber [x]
+(extend-type BigInt
+  IEquiv
+  (-equiv [o other]
+    (clojure.core/and (js/bn.isBN other)
+         (.eq o other))))
+
+(defn bigint [x]
   (cond
-    (number? x) (BN. x)
-    (array? x) (BN. x)))
+    (number? x)     (BigInt. x)
+    (array? x)      (BigInt. x)
+    (string? x)     (BigInt. (cond-> x
+                               (str/starts-with? x "0x") (subs 2))
+                             16)
+    (byte-array? x) (BigInt. (js/Array.from x))))
 
-(def one (bignumber 1))
-(def zero (bignumber 0))
+(def one (bigint 1))
+(def zero (bigint 0))
 
 (defn zero? [x] (.isZero x))
 
@@ -23,6 +35,7 @@
 (defn mod [x y] (.mod x y))
 
 (defn not [x] (.not x))
+(defn abs [x] (.abs x))
 
 (defn -   [x & xs] (if (not-empty xs) (.sub x (apply -   xs)) x))
 (defn +   [x & xs] (if (not-empty xs) (.add x (apply +   xs)) x))
