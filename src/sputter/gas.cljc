@@ -31,6 +31,9 @@
 (defmethod op->variable-cost ::mem-extend [op constants]
   (let [width      (mem-op->byte-width op)
         [addr]     (::op/popped op)
+        ;; TODO need better way to approach mixing bigints and numbers
+        addr #?(:clj addr
+                :cljs (.toNumber addr))
         prev-words (-> op :sputter/tx mem/words)
         curr-words (int (Math/ceil (/ (+ addr width) word/size)))]
     (max 0 (- (mem-fee curr-words (:per-memory-word constants))

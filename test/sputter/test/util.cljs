@@ -85,6 +85,5 @@
 
 (defn test-details [tests]
   (for [[test-name test] tests]
-    (if (= test-name :addmod2)
-      {test-name {:test test
-                  :tx (test->tx test)}})))
+    {test-name {:test test
+                :tx (test->tx test)}}))

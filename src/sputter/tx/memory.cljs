@@ -22,20 +22,21 @@
         arr)
       table)))
 
+;; TODO don't convert dest-byte into a js number?
 (extend-type js/Uint8Array
   VMMemory
   (insert [mem dest-byte byte-vec n]
     (let [dest-byte (if (js/bn.isBN dest-byte) (.toNumber dest-byte) dest-byte)
           n (if (js/bn.isBN n) (.toNumber n) n)
           data (.slice byte-vec (- (count byte-vec) n))
-          mem'  (extend* mem (+ dest-byte n))]
-      (.set mem' data dest-byte)
-      mem'))
+          mem  (extend* mem (+ dest-byte n))]
+      (.set mem data dest-byte)
+      mem))
   (recall [mem from-byte n-bytes]
     (let [from-byte (if (js/bn.isBN from-byte) (.toNumber from-byte) from-byte)
           n-bytes (if (js/bn.isBN n-bytes) (.toNumber n-bytes) n-bytes)
-          mem' (extend* mem (+ from-byte n-bytes))]
-      [mem' (.slice mem from-byte (+ from-byte n-bytes))]))
+          mem (extend* mem (+ from-byte n-bytes))]
+      [mem (.slice mem from-byte (+ from-byte n-bytes))]))
   (words [mem]
     (int (Math/ceil (/ (count mem) word/size)))))
 
