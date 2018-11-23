@@ -69,7 +69,9 @@
 #?(:cljs
    (do
     (defn- truncate [word]
-      (bn/and (bn/abs word) max-value))
+      (if (.isNeg word)
+        (bn/and (bn/+ word max-value bn/one) max-value)
+        (bn/and word max-value)))
 
     (extend-type bn/BigInt
       VMWord

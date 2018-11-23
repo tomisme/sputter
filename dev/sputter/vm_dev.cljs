@@ -5,6 +5,16 @@
   (:require-macros
    [devcards.core :refer [defcard]]))
 
+(defcard test
+  (let [p (vm/disassemble "0x60036001600660000308600055")
+        t (tx/create-transaction
+            {:gas 100000
+             :program p
+             :message {:recipient "0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"}})]
+    {"program" p
+     "transaction" (assoc t :program "...")
+     "(execute)" (assoc (vm/execute t) :program "...")}))
+
 (defcard add
   (let [p (vm/disassemble (byte-array [0x60 0x01 0x60 0x02 0x01]))
         t (tx/create-transaction
@@ -24,15 +34,6 @@
 
 (defcard mem
   (let [p (vm/disassemble "0x60ff60005260ee601e53601e6002f3")
-        t (tx/create-transaction
-            {:gas 2100
-             :program p})]
-    {"program" p
-     "transaction" (assoc t :program "...")
-     "(execute)" (assoc (vm/execute t) :program "...")}))
-
-(defcard storage
-  (let [p (vm/disassemble "0x6000600001600055")
         t (tx/create-transaction
             {:gas 2100
              :program p})]
