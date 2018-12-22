@@ -8,9 +8,6 @@
 (deftest add
   (test.util/run-vm-tests (get-tests #"^add\d+$")))
 
-(defcard addmod
-  (test.util/test-details (get-tests #"^addmod[^_]+$")))
-
 (deftest addmod
   (test.util/run-vm-tests (get-tests #"^addmod[^_]+$")))
 

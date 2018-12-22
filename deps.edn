@@ -4,4 +4,4 @@
         devcards {:mvn/version "0.2.5"}
         cljsjs/bn {:mvn/version "4.11.8-0"}
         cheshire {:mvn/version "5.8.0"}}
- :paths ["src" "test" "dev" "target" "resources"]}
+ :paths ["src" "test" "target" "resources"]}
